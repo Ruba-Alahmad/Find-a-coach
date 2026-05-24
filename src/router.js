@@ -21,7 +21,7 @@ const router = createRouter({
          ]},
         {path: '/register', component: coachRegistration},
         {path: '/requests', component: requestsReceived},
-        {path: '/notFound(.*)', component: notFound},
+        {path: '/:notFound(.*)', component: notFound},
     ]
 });
 export default router;
