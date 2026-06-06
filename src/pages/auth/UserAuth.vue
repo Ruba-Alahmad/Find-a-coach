@@ -1,5 +1,12 @@
 <template>
-    <base-card>
+    <div>
+        <base-dialog :show="!!error" title="An error ocurred" @close="handelError">
+            <p>{{ error }}</p>
+        </base-dialog>
+        <base-dialog fixed :show="isLoading" title="Authenticating...">
+            <base-spinner></base-spinner>
+        </base-dialog>
+         <base-card>
     <form @submit.prevent="submitForm">
         <div class="form-control">
             <label for="email">E-mail</label>
@@ -14,6 +21,7 @@
         <base-button type="button" mode="flat" @click="switchAuthMode">{{ switchModeButtonCaption    }}</base-button>
     </form>
     </base-card>
+    </div>
 </template>
 
 
@@ -26,27 +34,36 @@
                 email:'',
                 password: '',
                 formIsValid: true,
-                mode:'login'
+                mode:'login',
+                isLoading: false,
+                error: null
             }
         },
         methods:{
-           submitForm(){
+           async submitForm(){
             this.formIsValid = true;
             if(this.email === '' || !this.email.includes('@') || this.password.length < 6){
                 this.formIsValid = false;
                 return;
             }
             
+            this.isLoading = true;
 
-            if(this.mode === 'login'){
+            try{
+                if(this.mode === 'login'){
                 // ...
-            }
-            else{
-                this.$store.dispatch('signup',{
+                }
+                else{
+                await this.$store.dispatch('signup',{
                     email: this.email,
                     password: this.password
-                })
+                    });
+                }
+            } catch(err){
+                this.error = err.message || 'Failed to authenticate, try later.';
             }
+             this.isLoading = false;
+
            } ,
            switchAuthMode(){
             if(this.mode === 'login'){
@@ -55,6 +72,9 @@
             else{
                 this.mode = 'login';
             }
+           },
+           handelError(){
+            this.error = null;
            }
         },
         computed:{
