@@ -51,6 +51,7 @@ export default {
         description(){
             return this.selectedCoach.description;
         }
-    }
+    },
+    
 }
 </script>
